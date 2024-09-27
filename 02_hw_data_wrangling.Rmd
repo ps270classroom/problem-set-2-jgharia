@@ -123,12 +123,12 @@ library(ggplot2)
 ```
 
 ```{r}
-fb_ads_mill <- fb_ads |>
+fb_ads <- fb_ads |>
   mutate(impressions_millions = impressions * 1000000)
 ```
 
 ```{r}
-us_house_ads <- fb_ads_mill |>
+us_house_ads <- fb_ads |>
   filter(office == "US House")
 ```
 
