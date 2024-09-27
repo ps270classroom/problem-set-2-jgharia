@@ -124,7 +124,7 @@ library(ggplot2)
 
 ```{r}
 fb_ads <- fb_ads |>
-  mutate(impressions_millions = impressions * 1000000)
+  mutate(impressions_millions = impressions / 1000000)
 ```
 
 ```{r}
