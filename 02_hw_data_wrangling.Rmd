@@ -1,6 +1,6 @@
 ---
 title: "Problem Set 2: Data Wrangling"
-author: Your Name Here
+author: Jana Gharia 
 output: pdf_document
 ---
 
@@ -45,6 +45,28 @@ Use `dplyr` functions to create a table with the number of candidates in each ty
 
 ## Answer 1
 
+```{r}
+library(readr)
+library (dplyr)
+library (knitr)
+```
+
+```{r}
+fb_ads <- 
+  read_csv("data/fb_ads.csv")
+fb_ads
+```
+
+```{r}
+#num_candidates <- (fb_ads$cand_name)
+incumbency_table <- fb_ads |>
+  group_by(incumbency) |>
+  summarize(n = n()) 
+```
+
+```{r}
+knitr::kable(incumbency_table)
+```
 
 
 \newpage
@@ -65,12 +87,28 @@ In the writeup, describe which type of candidate sponsored the most promoting ad
 
 ## Answer 2
 
+```{r}
+filtered_fb_ads <- fb_ads |>
+  filter(office %in% c("US House", "US Senate"))
+```
 
+```{r}
+party_incumbent_promote <- filtered_fb_ads |>
+  group_by(party, incumbency) |>
+  summarize(promote_prop = mean(ad_tone_promote, na.rm = TRUE))
+```
+
+```{r}
+knitr::kable(party_incumbent_promote, 
+             digits = 3, 
+             col.names = c("Party", "Incumbency Status", "Average Promote Proportion"))
+```
+
+Democratic Incumbent sponsored the most promoting ads on average. 
 
 \newpage
 
 ## Question 3 (7 points)
-
 
 Create a new variable called `impressions_millions` that is the total Facebook ad impressions in millions (as opposed to single impressions). Make sure to save the resulting dataset back as `fb_ads`.
 
@@ -80,6 +118,29 @@ Create a histogram of this variable for just the US House races. Save the ggplot
 
 ## Answer 3
 
+```{r}
+library(ggplot2)
+```
+
+```{r}
+fb_ads <- fb_ads |>
+  mutate(impressions_millions = impressions * 1000000)
+```
+
+```{r}
+us_house_ads <- fb_ads |>
+  filter(office == "US House")
+```
+
+```{r}
+plot_q3 <- ggplot(us_house_ads, aes(x = impressions_millions)) +
+  geom_histogram() + 
+  labs(title = "Histogram of Facebook Ad Impressions (Millions) fror US House Races", 
+       x = "Impression (Millions)", 
+       y = "Count") 
+
+plot_q3
+```
 
 
 \newpage
@@ -103,6 +164,39 @@ You do not need to exactly match the labels, but you should have informative lab
 
 ## Answer 4
 
+```{r}
+top_15_candidates <- fb_ads |>
+  filter(office == "US House") |>
+  arrange(desc(impressions_millions)) |>
+  slice_head(n = 15)
+```
+
+
+```{r}
+fb_top_plot <- ggplot(top_15_candidates, 
+                      aes(x = impressions_millions, 
+                          y = cand_name_last, 
+                          fill = party)) 
+```
+
+```{r}
+top_cand <- fb_ads |> 
+  filter(office == "US House") |>
+  slice_max(order_by = impressions_millions, n=15) |> 
+  mutate(cand_name_last = reorder(cand_name_last,
+                                  impressions_millions))
+
+fb_top_plot <- ggplot(top_cand, aes(x = impressions_millions, 
+                                    y = cand_name_last, 
+                                    fill = party)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Top 15 House Candidate Facebook Ad Impressions, 2017-2018",
+       x = "Facebook Ad Impressions (in millions)",
+       y = "Candidate Last Name") +
+  scale_fill_manual(values = c("R" = "red", "D" = "steelblue4"))
+
+fb_top_plot
+```
 
 
 \newpage
