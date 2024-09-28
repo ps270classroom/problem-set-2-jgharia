@@ -175,7 +175,8 @@ top_15_candidates <- fb_ads |>
 ```{r}
 fb_top_plot <- ggplot(top_15_candidates, 
                       aes(x = impressions_millions, 
-                          y = cand_name_last))
+                          y = cand_name_last, 
+                          fill = party)) 
 ```
 
 ```{r}
@@ -186,12 +187,13 @@ top_cand <- fb_ads |>
                                   impressions_millions))
 
 fb_top_plot <- ggplot(top_cand, aes(x = impressions_millions, 
-                                    y = cand_name_last)) +
-  geom_bar(stat = "identity") +
+                                    y = cand_name_last, 
+                                    fill = party)) +
+  geom_bar(stat = "identity", aes(fill = party)) +
   labs(title = "Top 15 House Candidate Facebook Ad Impressions, 2017-2018",
        x = "Facebook Ad Impressions (in millions)",
-       y = "Candidate Last Name") +
-  scale_fill_manual(values = c("R" = "red", "D" = "steelblue4"))
+       y = "Candidate Last Name")  
+  # scale_fill_manual(values = c("R" = "red", "D" = "steelblue4"))
 
 fb_top_plot
 ```
