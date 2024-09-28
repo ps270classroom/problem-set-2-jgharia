@@ -175,8 +175,7 @@ top_15_candidates <- fb_ads |>
 ```{r}
 fb_top_plot <- ggplot(top_15_candidates, 
                       aes(x = impressions_millions, 
-                          y = cand_name_last, 
-                          fill = party)) 
+                          y = cand_name_last))
 ```
 
 ```{r}
